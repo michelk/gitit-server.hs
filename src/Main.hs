@@ -73,11 +73,9 @@ gitit port' ds index =
 
 main :: IO ()
 main = do
-  --cfg <- cmdargs
-  let cfg = CmdArgs {cfgPort = 5005,  cfgDir = "test", cfgIndex = True}
-  --let dir' = cfgDir cfg
-  --ds <- getDirectoryContents dir'
-  --let ds' = map (dir' F.</> ) . filter ( `notElem` [".", ".."]) $ ds
-  --ds'' <- filterM doesDirectoryExist ds'
-  let ds'' = ["markdownWiki", "latexWiki"]
+  cfg <- cmdargs
+  let dir' = cfgDir cfg
+  ds <- getDirectoryContents dir'
+  let ds' = map (dir' F.</> ) . filter ( `notElem` [".", ".."]) $ ds
+  ds'' <- filterM doesDirectoryExist ds'
   gitit (cfgPort cfg) ds'' (cfgIndex cfg)
