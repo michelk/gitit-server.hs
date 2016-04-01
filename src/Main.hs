@@ -31,46 +31,53 @@ cmdargs = execParser opts
           switch (long "no-listing" <> short 'n' <> help "Whether to not show a directory listing")
 
 
+customizeConfig :: Config -> Config
+customizeConfig conf =
+  conf {pdfExport = True
+       ,defaultExtension = "md"}
+
+
 configRelDir :: Config -> FilePath -> Config
 configRelDir conf path' =
-  conf {repositoryPath = path' F.</> repositoryPath conf
-       ,staticDir = path' F.</> staticDir conf
-       ,templatesDir = path' F.</> templatesDir conf
-       ,cacheDir = path' F.</> cacheDir conf
+  conf {repositoryPath = path'
        ,pdfExport = True
-       ,pandocUserData = Just (path' F.</> "pandoc")
        ,defaultExtension = "md"
        }
-
 
 indexPage :: [FilePath] -> Bool -> ServerPart Response
 indexPage ds notShowIndex =
   ok $
   toResponse $
   if notShowIndex
-     then p << "404 Error"
+     then p << ""
      else (p << "Wiki index") +++
           ulist << map (\path' -> li << hotlink path' << path') ds
 
+handlerFor :: Config -> FilePath-> ServerPart Response
+handlerFor conf path' = dir path' $
+  wiki conf{ repositoryPath = path'}
 
 gitit :: Int -> [FilePath] -> Bool-> IO ()
 gitit port' ds index =
   do conf <- getDefaultConfig
+     let conf' = customizeConfig conf
      forM_ ds $
        \path' ->
-         do let conf' = configRelDir conf path'
-            createStaticIfMissing conf'
-            createRepoIfMissing conf'
-            createTemplateIfMissing conf'
-            initializeGititState conf'
+         do let conf'' = conf' {repositoryPath = path'}
+            createRepoIfMissing conf''
+     createStaticIfMissing conf'
+     createTemplateIfMissing conf'
+     initializeGititState conf'
      simpleHTTP nullConf {port = port' } $
-       (nullDir >> indexPage ds index) `mplus` msum (map (wiki . configRelDir conf )  ds)
+       (nullDir >> (indexPage ds index)) `mplus` msum (map (handlerFor conf') ds)
 
 main :: IO ()
 main = do
-  cfg <- cmdargs
-  let dir' = cfgDir cfg
-  ds <- getDirectoryContents dir'
-  let ds' = map (dir' F.</> ) . filter ( `notElem` [".", ".."]) $ ds
-  ds'' <- filterM doesDirectoryExist ds'
+  --cfg <- cmdargs
+  let cfg = CmdArgs {cfgPort = 5005,  cfgDir = "test", cfgIndex = True}
+  --let dir' = cfgDir cfg
+  --ds <- getDirectoryContents dir'
+  --let ds' = map (dir' F.</> ) . filter ( `notElem` [".", ".."]) $ ds
+  --ds'' <- filterM doesDirectoryExist ds'
+  let ds'' = ["markdownWiki", "latexWiki"]
   gitit (cfgPort cfg) ds'' (cfgIndex cfg)
