@@ -20,8 +20,7 @@ cmdargs = execParser opts
   where opts =
           info (helper <*> cmdargsP)
                (fullDesc <>
-                progDesc "Run multiple gitit-wikis under a common directory" <>
-                header "gitit-server - Program to run multiple gitit-wikis under a common directory")
+                header "gitit-server - Program to run multiple gitit-wikis")
         cmdargsP =
           CmdArgs <$>
           option auto

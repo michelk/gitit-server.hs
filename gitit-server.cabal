@@ -1,13 +1,13 @@
 name:                gitit-server
-version:             0.1.0.0
-synopsis:            Initial project template from stack
+version:             0.1.0
+synopsis:            Run multiple gitit-wikis 
 description:         Please see README.md
-homepage:            http://github.com/michelk/gitit-server#readme
+homepage:            http://github.com/michelk/gitit-server.hs#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Michel Kuhlmann
 maintainer:          kum@tkconsult.ch
-copyright:           2016 Author name here
+copyright:           2016 Michel Kuhlmann
 category:            Web
 build-type:          Simple
 -- extra-source-files:
