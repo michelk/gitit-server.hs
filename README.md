@@ -28,11 +28,11 @@ In order to use a separate logo for each wiki
 - copy `data/templates/logo.st` from this repository into the `templates`-directory of the wikis
 - change
 
-       <a href="$base$/" alt="site logo" title="Go to top page"><img src="$base$/img/logo.png" /></a>
+           <a href="$base$/" alt="site logo" title="Go to top page"><img src="$base$/img/logo.png" /></a>
 
        to 
 
-       <a href="$base$/" alt="site logo" title="Go to top page"><img src="$base$/logo.png" /></a>
+           <a href="$base$/" alt="site logo" title="Go to top page"><img src="$base$/logo.png" /></a>
 
 - add logo.png to your wiki-repository
 
