@@ -1,6 +1,9 @@
 # gitit-server: Wrapper of gitit to run multiple wikis. 
 
-This is a small command-line program to run multiple wikiks with one process based on [gitit][].
+This is a small command-line program to run multiple wikis with one process
+based on [gitit][]. It takes into account all directories with git-repositories
+under a common directory.
+
 
 ## Usage:
 
@@ -8,18 +11,36 @@ This is a small command-line program to run multiple wikiks with one process bas
 gitit -h
 ```
 
-    gitit-server - Program to run multiple gitit-wikis under a common directory
+    gitit-server - Program to run multiple gitit-wikis
     
-    Usage: gitit-server (-p|--port PORT) (-w|--wikis DIR) [-n|--no-listing]
-      Run multiple gitit-wikis under a common directory
+    Usage: gitit-server (-p|--port PORT) (-d|--dir DIR) [-n|--no-listing]
     
     Available options:
       -h,--help                Show this help text
       -p,--port PORT           Port to listen
-      -w,--wikis DIR           Directories of wikis to take into account (eg:
-                               uno:due:tre)
+      -d,--dir DIR             Directory where repositories are located
       -n,--no-listing          Whether to not show a directory listing
 
+
+## Example
+
+If you have a directory structure like
+
+    .
+    ├── test1
+    │   └── .git
+    ├── test2
+    │   └── .git
+    └── test3
+        └── .git
+
+Running
+
+```bash    
+gitit-server -d . -p 5001
+```
+
+will serve 3 wikis at `localhost:5001/test{1,2,3}`.
 
 ## Customization
 

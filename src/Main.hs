@@ -7,13 +7,12 @@ import Happstack.Server.SimpleHTTP
 import Options.Applicative
 import System.Directory
 import qualified System.FilePath as F
-import Data.List.Split (splitOn)
+import System.Posix.Directory (changeWorkingDirectory)
 
 data CmdArgs = CmdArgs
   {cfgPort :: Int
-  ,cfgWikis :: String
+  ,cfgDir :: String
   ,cfgIndex :: Bool }
-
 
 cmdargs :: IO CmdArgs
 cmdargs = execParser opts
@@ -26,8 +25,8 @@ cmdargs = execParser opts
           option auto
                  (long "port" <> short 'p' <> metavar "PORT" <>
                   help "Port to listen") <*>
-          strOption (long "wikis" <> short 'w' <> metavar "LIST" <>
-                     help "Repository-directories of wikis to take into account (eg: uno:due:tre)") <*>
+          strOption (long "dir" <> short 'd' <> metavar "DIR" <>
+                     help "Directory where repositories are located") <*>
           switch (long "no-listing" <> short 'n' <> help "Whether to not show a directory listing")
 
 
@@ -55,7 +54,7 @@ indexPage ds notShowIndex =
 
 handlerFor :: Config -> FilePath-> ServerPart Response
 handlerFor conf path' = dir path' $
-  wiki conf{ repositoryPath = path'}
+  wiki conf { repositoryPath = path'}
 
 gitit :: Int -> [FilePath] -> Bool-> IO ()
 gitit port' ds index =
@@ -69,10 +68,14 @@ gitit port' ds index =
      createTemplateIfMissing conf'
      initializeGititState conf'
      simpleHTTP nullConf {port = port' } $
-       (nullDir >> (indexPage ds index)) `mplus` msum (map (handlerFor conf') ds)
+       (nullDir >> indexPage ds index) `mplus` msum (map (handlerFor conf') ds)
 
 main :: IO ()
 main = do
   cfg <- cmdargs
-  let ds = splitOn ":" (cfgWikis cfg)
-  gitit (cfgPort cfg) ds (cfgIndex cfg)
+  let dir' = cfgDir cfg
+  changeWorkingDirectory dir'
+  ds <- getDirectoryContents "."
+  let ds' = filter ( `notElem` [".", "..", "static", "templates"])  ds
+  ds'' <- filterM doesDirectoryExist ds'
+  gitit (cfgPort cfg) ds'' (cfgIndex cfg)
