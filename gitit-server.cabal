@@ -23,6 +23,7 @@ executable gitit-server
                      , gitit
                      , happstack-server
                      , optparse-applicative
+                     , split
                      , xhtml
   default-language:    Haskell2010
 

@@ -7,10 +7,11 @@ import Happstack.Server.SimpleHTTP
 import Options.Applicative
 import System.Directory
 import qualified System.FilePath as F
+import Data.List.Split (splitOn)
 
 data CmdArgs = CmdArgs
   {cfgPort :: Int
-  ,cfgDir :: String
+  ,cfgWikis :: String
   ,cfgIndex :: Bool }
 
 
@@ -26,8 +27,8 @@ cmdargs = execParser opts
           option auto
                  (long "port" <> short 'p' <> metavar "PORT" <>
                   help "Port to listen") <*>
-          strOption (long "dir" <> short 'd' <> metavar "DIR" <>
-                     help "Directory where wikis are located") <*>
+          strOption (long "wikis" <> short 'w' <> metavar "LIST" <>
+                     help "Repository-directories of wikis to take into account (eg: uno:due:tre)") <*>
           switch (long "no-listing" <> short 'n' <> help "Whether to not show a directory listing")
 
 
@@ -74,8 +75,5 @@ gitit port' ds index =
 main :: IO ()
 main = do
   cfg <- cmdargs
-  let dir' = cfgDir cfg
-  ds <- getDirectoryContents dir'
-  let ds' = map (dir' F.</> ) . filter ( `notElem` [".", ".."]) $ ds
-  ds'' <- filterM doesDirectoryExist ds'
-  gitit (cfgPort cfg) ds'' (cfgIndex cfg)
+  let ds = splitOn ":" (cfgWikis cfg)
+  gitit (cfgPort cfg) ds (cfgIndex cfg)
