@@ -4,6 +4,15 @@ This is a small command-line program to run multiple wikis with one process
 based on [gitit][]. It takes into account all directories with git-repositories
 under a common directory.
 
+## Installation
+
+You need [stack](http://docs.haskellstack.org/en/stable/README/).
+
+```bash
+git clone https://github.com/michelk/gitit-server.hs
+cd gitit-server
+stack install
+```
 
 ## Usage:
 
