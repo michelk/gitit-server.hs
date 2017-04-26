@@ -2,7 +2,7 @@
 # For more information, see: http://docs.haskellstack.org/en/stable/yaml_configuration/
 
 # Specifies the GHC version and set of packages available (e.g., lts-3.5, nightly-2015-09-21, ghc-7.10.2)
-resolver: lts-5.10
+resolver: lts-8.12
 
 # Local packages, usually specified by relative directory name
 packages:
@@ -10,8 +10,10 @@ packages:
 
 # Packages to be pulled from upstream that are not in the resolver (e.g., acme-missiles-0.3)
 extra-deps:
-- gitit-0.12.1.1
+- gitit-0.12.2.1
 - recaptcha-0.1.0.3
+- filestore-0.6.3.1
+- uri-0.1.6.4
 
 
 # Override default flag values for local packages and extra-deps
@@ -19,9 +21,6 @@ flags: {}
 
 # Extra package databases containing global packages
 extra-package-dbs: []
-nix:
-  enable: true
-  shell-file: shell.nix
 # Control whether we use the GHC we find on the path
 # system-ghc: true
 

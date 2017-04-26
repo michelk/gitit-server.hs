@@ -2,6 +2,7 @@ module Main where
 
 import Network.Gitit
 import Control.Monad
+import Data.Monoid ((<>))
 import Text.XHtml hiding (dir, option, value, header)
 import Happstack.Server.SimpleHTTP
 import Options.Applicative
